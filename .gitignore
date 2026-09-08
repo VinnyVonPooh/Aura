@@ -1,0 +1,10 @@
+.vs
+*.sln
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+enc_temp_folder/
+Stage/
+BuildFromBat/
