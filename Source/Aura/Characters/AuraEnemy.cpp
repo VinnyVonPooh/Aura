@@ -3,10 +3,17 @@
 #include "AuraEnemy.h"
 
 #include "Aura/Aura.h"
+#include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Aura/AbilitySystem/AuraAttributeSet.h"
 
 AAuraEnemy::AAuraEnemy()
 {
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block); // для поиска того, что есть под курсором, блокируем видимый канал = детектится в этом канале 
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+
+	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 }
 
 void AAuraEnemy::HighlightActor()
