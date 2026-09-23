@@ -17,13 +17,13 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+protected:
+	virtual void InitAbilityActorInfo() override;
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* Camera;
-
-private:
-	void InitAbilityActorInfo();
 };
