@@ -70,5 +70,5 @@ void AAuraCharacter::InitAbilityActorInfo()
 	}
 
 	// Инициализация аттрибутов (сила, интеллект..) через эффект
-	InitializePrimaryAttributes();
+	InitializeDefaultAttributes();
 }
