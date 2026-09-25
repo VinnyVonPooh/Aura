@@ -62,9 +62,13 @@ void AAuraCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 
+	// Инициализация хада - создание виджета, привязка контроллера, сигналы
 	if (auto* AuraPlayerController = Cast<AAuraPlayerController>(GetController())) {
 		if (auto* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD())) {
 			AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
 		}
 	}
+
+	// Инициализация аттрибутов (сила, интеллект..) через эффект
+	InitializePrimaryAttributes();
 }
