@@ -42,6 +42,8 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 
 	// Инициализация актора, владеющего системой абилок для сервера
 	InitAbilityActorInfo();
+
+	AddCharacterAbilities();
 }
 
 void AAuraCharacter::OnRep_PlayerState()
