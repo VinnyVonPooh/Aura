@@ -47,6 +47,7 @@ struct FEffectProperties
 	ACharacter* TargetCharacter = nullptr;
 };
 
+
 UCLASS()
 class AURA_API UAuraAttributeSet : public UAttributeSet
 {
@@ -60,6 +61,9 @@ public:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 public:
+	// Мапа связывающая тег с функцией получения аттрибута
+	TMap<FGameplayTag, FGameplayAttribute(*)()> TagsToAttributes;
+
 	// ------------------ Vital Attributes ------------------
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
