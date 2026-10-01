@@ -73,5 +73,7 @@ private:
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
 
+	FHitResult CursorHit;
+
 	void CursorTrace(); // реализация функционала подсветки акторов
 };
