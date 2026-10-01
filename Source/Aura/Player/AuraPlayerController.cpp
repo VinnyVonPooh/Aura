@@ -2,8 +2,8 @@
 
 #include "AuraPlayerController.h"
 
-#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Aura/Input/AuraInputComponent.h"
 #include "Aura/Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
@@ -38,8 +38,11 @@ void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	auto* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+	auto* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
+	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+
+	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased,
+										   &ThisClass::AbilityInputTagHeld);
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -56,6 +59,12 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 }
+
+void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag) {}
+
+void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag) {}
+
+void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag) {}
 
 void AAuraPlayerController::CursorTrace()
 {
