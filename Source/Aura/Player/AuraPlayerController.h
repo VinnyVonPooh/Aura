@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class UAuraAbilitySystemComponent;
 class UAuraInputConfig;
 class IEnemyInterface;
 struct FInputActionValue;
@@ -49,4 +50,10 @@ private:
 	// акторы для функционала подсветки этих акторов
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
+
+	UPROPERTY()
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+
+private:
+	UAuraAbilitySystemComponent* GetASC();
 };
