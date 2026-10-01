@@ -65,6 +65,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
 
+	void AutoRun();
+
 private:
 	// ----------------- Подсветка врагов --------------------
 	// акторы для функционала подсветки этих акторов

@@ -23,6 +23,9 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
+
+	// Авто движение персонажа к точке нажатия кнопкой мыши
+	AutoRun();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -87,14 +90,16 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 	const APawn* ControlledPawn = GetPawn();
 	if (FollowTime <= ShortPressThreshold && ControlledPawn) {
-		if (const auto* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination)) {
-			
+		if (const auto* NavPath =
+				UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination)) {
+
 			Spline->ClearSplinePoints();
 			for (const FVector& PointLoc : NavPath->PathPoints) {
 				Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
 
 				DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 			}
+			CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
 			bAutoRunning = true;
 		}
 	}
@@ -133,6 +138,28 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
 		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	}
 	return AuraAbilitySystemComponent;
+}
+
+void AAuraPlayerController::AutoRun()
+{
+	if (!bAutoRunning) {
+		return;
+	}
+
+	if (APawn* ControlledPawn = GetPawn()) {
+		const FVector LocationOnSpline =
+			Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+
+		ControlledPawn->AddMovementInput(Direction);
+
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		if (DistanceToDestination <= AutoRunAcceptanceRadius) {
+			bAutoRunning = false;
+			Spline->ClearSplinePoints();
+		}
+	}
 }
 
 void AAuraPlayerController::CursorTrace()
