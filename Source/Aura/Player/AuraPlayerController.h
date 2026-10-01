@@ -38,22 +38,21 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> InputConfig; // конфиг связка InputAction + InputTag
 
+	UPROPERTY()
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent; // кешированное значение каста AbilitySystemComponent к AuraAbilitySystemComponent
+
 	void Move(const FInputActionValue& InputActionValue);
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 
-	void CursorTrace(); // реализация функционала подсветки акторов
+	UAuraAbilitySystemComponent* GetASC();
 
 private:
 	// акторы для функционала подсветки этих акторов
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
 
-	UPROPERTY()
-	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
-
-private:
-	UAuraAbilitySystemComponent* GetASC();
+	void CursorTrace(); // реализация функционала подсветки акторов
 };

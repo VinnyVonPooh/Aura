@@ -80,6 +80,16 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 	GetASC()->AbilityInputTagHeld(InputTag);
 }
 
+UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
+{
+	if (!AuraAbilitySystemComponent) {
+
+		auto* AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>());
+		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	}
+	return AuraAbilitySystemComponent;
+}
+
 void AAuraPlayerController::CursorTrace()
 {
 	FHitResult CursorHit;
@@ -104,14 +114,4 @@ void AAuraPlayerController::CursorTrace()
 			}
 		}
 	}
-}
-
-UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
-{
-	if (!AuraAbilitySystemComponent) {
-
-		auto* AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>());
-		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	}
-	return AuraAbilitySystemComponent;
 }
