@@ -14,6 +14,11 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AAuraCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
@@ -24,9 +29,10 @@ UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void AAuraCharacterBase::BeginPlay()
+FVector AAuraCharacterBase::GetCombatSocketLocation() const
 {
-	Super::BeginPlay();
+	check(Weapon);
+	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
 void AAuraCharacterBase::InitAbilityActorInfo() {}
