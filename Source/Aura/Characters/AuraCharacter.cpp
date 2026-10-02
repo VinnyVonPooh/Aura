@@ -8,6 +8,7 @@
 #include "Aura/Player/AuraPlayerState.h"
 #include "Aura/UI/HUD/AuraHUD.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -34,6 +35,9 @@ AAuraCharacter::AAuraCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
 	Camera->bUsePawnControlRotation = false;
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 }
 
 void AAuraCharacter::PossessedBy(AController* NewController)

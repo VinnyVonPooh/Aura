@@ -36,11 +36,19 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction; // InputAction движения
 	
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction; // InputAction движения
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> InputConfig; // конфиг связка InputAction + InputTag
 
 	UPROPERTY()
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent; // кешированное значение каста AbilitySystemComponent к AuraAbilitySystemComponent
+
+	bool bShiftKeyDown = false;
+
+	void ShiftPressed();
+	void ShiftReleased();
 
 	void Move(const FInputActionValue& InputActionValue);
 
