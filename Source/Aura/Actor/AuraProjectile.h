@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "AuraRpojectile.generated.h"
+#include "AuraProjectile.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;

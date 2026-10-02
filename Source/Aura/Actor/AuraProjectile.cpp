@@ -1,7 +1,7 @@
 // Copyright (c) MarmoDrake. All Rights Reserved.
 
 
-#include "AuraRpojectile.h"
+#include "AuraProjectile.h"
 
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
