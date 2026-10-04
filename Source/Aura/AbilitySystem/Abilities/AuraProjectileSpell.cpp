@@ -2,6 +2,8 @@
 
 #include "AuraProjectileSpell.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Aura/Actor/AuraProjectile.h"
 #include "Aura/Interaction/CombatInterface.h"
 
@@ -30,6 +32,11 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector ProjectileTargetLocatio
 		auto* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),
 																		   Cast<APawn>(GetOwningActorFromActorInfo()),
 																		   ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+		// установка эффекта (нанесение дамага) на сам снаряд
+		const auto* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+		const auto SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
+		Projectile->DamageEffectSpecHandle = SpecHandle;
 
 		Projectile->FinishSpawning(SpawnTransform);
 	}

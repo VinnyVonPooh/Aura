@@ -2,6 +2,8 @@
 
 #include "AuraProjectile.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
@@ -58,8 +60,16 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	LoopingSoundComponent->Stop();
 
 	if (HasAuthority()) {
+
+		// Применение на OtherActor эффекта, дамажищего при оверлапе
+		// Применяем только на сервере
+		if (auto* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor)) {
+			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+		}
+		// разрушаем на сервере
 		Destroy();
 	} else {
+		// на клиенте
 		bHit = true;
 	}
 }
