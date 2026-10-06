@@ -31,9 +31,8 @@ public:
 
 protected:
 	virtual void InitAbilityActorInfo();
-
+	virtual void InitializeDefaultAttributes() const; // Инициализация аттрибутов (сила, интеллект..) через эффект
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level) const;
-	void InitializeDefaultAttributes() const; // Инициализация аттрибутов (сила, интеллект..) через эффект
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
