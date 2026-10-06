@@ -47,7 +47,6 @@ struct FEffectProperties
 	ACharacter* TargetCharacter = nullptr;
 };
 
-
 UCLASS()
 class AURA_API UAuraAttributeSet : public UAttributeSet
 {
@@ -62,7 +61,7 @@ public:
 
 public:
 	// Мапа связывающая тег с функцией получения аттрибута
-	TMap<FGameplayTag, FGameplayAttribute(*)()> TagsToAttributes;
+	TMap<FGameplayTag, FGameplayAttribute (*)()> TagsToAttributes;
 
 	// ------------------ Vital Attributes ------------------
 
@@ -80,6 +79,13 @@ public:
 
 	UFUNCTION()
 	void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
+
+public:
+	// ------------------ Meta Attributes ------------------
+
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
 
 public:
 	// ------------------ Primary Attributes ------------------
