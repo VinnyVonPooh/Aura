@@ -29,6 +29,8 @@ public:
 
 	virtual FVector GetCombatSocketLocation() const override;
 
+	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
+
 protected:
 	virtual void InitAbilityActorInfo();
 	virtual void InitializeDefaultAttributes() const; // Инициализация аттрибутов (сила, интеллект..) через эффект
@@ -61,4 +63,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };
