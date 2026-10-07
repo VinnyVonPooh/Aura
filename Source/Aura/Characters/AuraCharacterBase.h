@@ -30,6 +30,10 @@ public:
 	virtual FVector GetCombatSocketLocation() const override;
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
+	virtual void Die() override; // Вызывается только на сервере
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath(); // Для всех маших - сервер, клиент
 
 protected:
 	virtual void InitAbilityActorInfo();

@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectExtension.h"
 #include "Aura/AuraGameplayTags.h"
+#include "Aura/Interaction/CombatInterface.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
@@ -115,9 +116,12 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			const float NewHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
 
+			if (const bool bFatal = NewHealth <= 0.f) {
+				if (auto* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor)) {
+					CombatInterface->Die();
+				}
 
-			const bool bFatal = NewHealth <= 0.f;
-			if (!bFatal) {
+			} else {
 				// если получен не смертельный урон, активируем абилку
 				FGameplayTagContainer TagContainer;
 				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
