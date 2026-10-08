@@ -10,7 +10,9 @@
 #include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/Input/AuraInputComponent.h"
 #include "Aura/Interaction/EnemyInterface.h"
+#include "Aura/UI/Widget/DamageTextComponent.h"
 #include "Components/SplineComponent.h"
+#include "GameFramework/Character.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -26,6 +28,20 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 	// Авто движение персонажа к точке нажатия кнопкой мыши
 	AutoRun();
+}
+
+// Вызывается на сервере
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+{
+	if (IsValid(TargetCharacter) && DamageTextComponentClass) {
+		auto* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		// аттачим к объекту, чтобы компонент получил координаты врага, потом деаттачим
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+
+		DamageText->SetDamageText(DamageAmount);
+	}
 }
 
 void AAuraPlayerController::BeginPlay()

@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class UDamageTextComponent;
 class USplineComponent;
 class UAuraAbilitySystemComponent;
 class UAuraInputConfig;
@@ -25,6 +26,9 @@ public:
 
 	virtual void PlayerTick(float DeltaTime) override;
 
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -35,15 +39,18 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction; // InputAction движения
-	
+
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> ShiftAction; // InputAction движения
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> InputConfig; // конфиг связка InputAction + InputTag
 
-	UPROPERTY()
-	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent; // кешированное значение каста AbilitySystemComponent к AuraAbilitySystemComponent
+	UPROPERTY() // кешированное значение каста AbilitySystemComponent к AuraAbilitySystemComponent
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+
+	UPROPERTY(EditDefaultsOnly) // класс компонента для показа текста с уроном
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
 	bool bShiftKeyDown = false;
 
@@ -77,11 +84,11 @@ private:
 
 private:
 	// ----------------- Подсветка врагов --------------------
+	void CursorTrace(); // реализация функционала подсветки акторов
+
 	// акторы для функционала подсветки этих акторов
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
 
 	FHitResult CursorHit;
-
-	void CursorTrace(); // реализация функционала подсветки акторов
 };
