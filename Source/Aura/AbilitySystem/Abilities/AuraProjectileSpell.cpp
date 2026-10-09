@@ -36,7 +36,21 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector ProjectileTargetLocatio
 
 		// установка эффекта (нанесение дамага) на сам снаряд
 		const auto* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-		const auto SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
+
+		// Заполнение контекста, не всё это нужно в данном примере 
+		auto EffectContextHandle = SourceASC->MakeEffectContext();
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(Projectile);
+
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(Projectile);
+		EffectContextHandle.AddActors(Actors);
+
+		FHitResult HitResult;
+		HitResult.Location = ProjectileTargetLocation;
+		EffectContextHandle.AddHitResult(HitResult);
+
+		const auto SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 
 		// Через SetByCaller назначаем аттрибуту в Эффекте значение
 		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
