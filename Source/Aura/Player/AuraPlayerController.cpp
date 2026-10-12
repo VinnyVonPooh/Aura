@@ -31,7 +31,8 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 }
 
 // Вызывается на сервере
-void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bInIsBlockedHit,
+															bool bInIsCriticalHit)
 {
 	if (IsValid(TargetCharacter) && DamageTextComponentClass) {
 		auto* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
@@ -40,7 +41,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bInIsBlockedHit, bInIsCriticalHit);
 	}
 }
 
