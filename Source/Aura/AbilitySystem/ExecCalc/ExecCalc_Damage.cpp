@@ -69,8 +69,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// ----------- Получение значения дамага из функционала Set by Caller ------------
 	float Damage = 0;
 	// Объединение дамагов разного типа (огонь и др)
-	for (auto DamageTag : FAuraGameplayTags::Get().DamageTypes) {
-		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTag);
+	for (const auto& DamageTagPair : FAuraGameplayTags::Get().DamageTypesToResistances) {
+		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTagPair.Key);
 		Damage += DamageTypeValue;
 	}
 
