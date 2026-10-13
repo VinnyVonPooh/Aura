@@ -53,12 +53,12 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector ProjectileTargetLocatio
 		const auto SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 
 		// Через SetByCaller назначаем аттрибуту в Эффекте значение
-		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+		// Дамаг берётся из таблицы по типу дамага (огонь и др)
+		for (auto& Pair :  DamageTypes) {
+			const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
+		}
 
-		// Дамаг берётся из таблицы
-		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, ScaledDamage);
-		
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 
 		Projectile->FinishSpawning(SpawnTransform);

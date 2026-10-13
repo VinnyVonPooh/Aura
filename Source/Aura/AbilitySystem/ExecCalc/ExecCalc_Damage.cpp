@@ -67,7 +67,12 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.TargetTags = TargetTags;
 
 	// ----------- Получение значения дамага из функционала Set by Caller ------------
-	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
+	float Damage = 0;
+	// Объединение дамагов разного типа (огонь и др)
+	for (auto DamageTag : FAuraGameplayTags::Get().DamageTypes) {
+		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTag);
+		Damage += DamageTypeValue;
+	}
 
 	// ----------- Использование аттрибута BlockChance у таргета. Если успешно заблокировано, то дамаг уменьшается вдвое ------------
 	float TargetBlockChance = 0.f;
