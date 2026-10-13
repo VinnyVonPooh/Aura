@@ -34,7 +34,8 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bInIsBlockedHit,
 															bool bInIsCriticalHit)
 {
-	if (IsValid(TargetCharacter) && DamageTextComponentClass) {
+	// Проверяем IsLocalController чтобы текст был только на одной машине
+	if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController()) {
 		auto* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
 		DamageText->RegisterComponent();
 		// аттачим к объекту, чтобы компонент получил координаты врага, потом деаттачим

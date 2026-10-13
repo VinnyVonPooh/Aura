@@ -23,15 +23,14 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector ProjectileTargetLocatio
 
 	if (const auto* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo())) {
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
-		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-		Rotation.Pitch = 0.f;
+		const FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
 		SpawnTransform.SetRotation(Rotation.Quaternion());
 
 		auto* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),
-																		   Cast<APawn>(GetOwningActorFromActorInfo()),
+																		   Cast<APawn>(GetAvatarActorFromActorInfo()),
 																		   ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		// установка эффекта (нанесение дамага) на сам снаряд

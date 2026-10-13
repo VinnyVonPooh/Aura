@@ -152,7 +152,7 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 {
 	// вызываем у контроллера игрока текст над врагом
 	if (Props.SourceCharacter != Props.TargetCharacter) {
-		if (auto* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0))) {
+		if (auto* PC = Cast<AAuraPlayerController>(Props.SourceCharacter->Controller)) {
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bInIsBlockedHit, bInIsCriticalHit);
 		}
 	}
