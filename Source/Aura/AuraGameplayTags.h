@@ -37,7 +37,6 @@ public:
 	FGameplayTag Attributes_Resistance_Lightning;
 	FGameplayTag Attributes_Resistance_Arcane;
 	FGameplayTag Attributes_Resistance_Physical;
-
 	// ------------------ Damage ----------------
 
 	FGameplayTag Damage;
@@ -51,6 +50,10 @@ public:
 	// ------------------ Effects ---------------
 
 	FGameplayTag Effects_HitReact;
+
+	// ------------------ Abilities -------------
+
+	FGameplayTag Abilities_Attack;
 
 	// ------------------ Input Tags ------------------
 
