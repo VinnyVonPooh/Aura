@@ -21,45 +21,43 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector ProjectileTargetLocatio
 		return;
 	}
 
-	if (const auto* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo())) {
-		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
-		const FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo());
+	const FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 
-		FTransform SpawnTransform;
-		SpawnTransform.SetLocation(SocketLocation);
-		SpawnTransform.SetRotation(Rotation.Quaternion());
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(SocketLocation);
+	SpawnTransform.SetRotation(Rotation.Quaternion());
 
-		auto* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),
-																		   Cast<APawn>(GetAvatarActorFromActorInfo()),
-																		   ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	auto* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),
+																	   Cast<APawn>(GetAvatarActorFromActorInfo()),
+																	   ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-		// установка эффекта (нанесение дамага) на сам снаряд
-		const auto* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+	// установка эффекта (нанесение дамага) на сам снаряд
+	const auto* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 
-		// Заполнение контекста, не всё это нужно в данном примере 
-		auto EffectContextHandle = SourceASC->MakeEffectContext();
-		EffectContextHandle.SetAbility(this);
-		EffectContextHandle.AddSourceObject(Projectile);
+	// Заполнение контекста, не всё это нужно в данном примере
+	auto EffectContextHandle = SourceASC->MakeEffectContext();
+	EffectContextHandle.SetAbility(this);
+	EffectContextHandle.AddSourceObject(Projectile);
 
-		TArray<TWeakObjectPtr<AActor>> Actors;
-		Actors.Add(Projectile);
-		EffectContextHandle.AddActors(Actors);
+	TArray<TWeakObjectPtr<AActor>> Actors;
+	Actors.Add(Projectile);
+	EffectContextHandle.AddActors(Actors);
 
-		FHitResult HitResult;
-		HitResult.Location = ProjectileTargetLocation;
-		EffectContextHandle.AddHitResult(HitResult);
+	FHitResult HitResult;
+	HitResult.Location = ProjectileTargetLocation;
+	EffectContextHandle.AddHitResult(HitResult);
 
-		const auto SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
+	const auto SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 
-		// Через SetByCaller назначаем аттрибуту в Эффекте значение
-		// Дамаг берётся из таблицы по типу дамага (огонь и др)
-		for (auto& Pair :  DamageTypes) {
-			const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
-		}
-
-		Projectile->DamageEffectSpecHandle = SpecHandle;
-
-		Projectile->FinishSpawning(SpawnTransform);
+	// Через SetByCaller назначаем аттрибуту в Эффекте значение
+	// Дамаг берётся из таблицы по типу дамага (огонь и др)
+	for (auto& Pair : DamageTypes) {
+		const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
 	}
+
+	Projectile->DamageEffectSpecHandle = SpecHandle;
+
+	Projectile->FinishSpawning(SpawnTransform);
 }

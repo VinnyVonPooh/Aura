@@ -38,7 +38,7 @@ UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation() const
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation() const
 {
 	check(Weapon);
 	return Weapon->GetSocketLocation(WeaponTipSocketName);

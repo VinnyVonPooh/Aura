@@ -27,7 +27,7 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const;
 
-	virtual FVector GetCombatSocketLocation() const override;
+	virtual FVector GetCombatSocketLocation_Implementation() const override;
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 	virtual void Die() override; // Вызывается только на сервере
