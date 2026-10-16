@@ -32,10 +32,15 @@ public:
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
 	virtual void Die() override; // Вызывается только на сервере
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath(); // Для всех маших - сервер, клиент
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TArray<FTaggedMontage> AttackMontages;
 
 protected:
 	virtual void InitAbilityActorInfo();
