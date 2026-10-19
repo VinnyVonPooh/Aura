@@ -16,8 +16,8 @@
 
 AAuraEnemy::AAuraEnemy()
 {
-	GetMesh()->SetCollisionResponseToChannel(
-		ECC_Visibility, ECR_Block); // для поиска того, что есть под курсором, блокируем видимый канал = детектится в этом канале
+	// для поиска того, что есть под курсором, блокируем видимый канал = детектится в этом канале
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
