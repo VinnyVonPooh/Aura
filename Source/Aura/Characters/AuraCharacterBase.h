@@ -36,6 +36,7 @@ public:
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() const override;
+	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) const override;
 	//--------- end CombatInterface --------------
 
 	UFUNCTION(NetMulticast, Reliable)
