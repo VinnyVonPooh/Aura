@@ -27,13 +27,16 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const;
 
-	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
+	//--------- CombatInterface --------------
 
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
+	virtual void Die() override; // Вызывается только на сервере
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
-	virtual void Die() override; // Вызывается только на сервере
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() const override;
+	//--------- end CombatInterface --------------
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath(); // Для всех маших - сервер, клиент
@@ -62,6 +65,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName RightHandSocketName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	UNiagaraSystem* BloodEffect;
+
+	UPROPERTY()
+	bool bDead = false;
+
+protected:
+	// ----- Ability System -----
+
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -76,9 +88,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
-
-	UPROPERTY()
-	bool bDead = false;
 
 protected:
 	// ----- Dissolve Effects -----
