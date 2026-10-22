@@ -37,6 +37,7 @@ public:
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() const override;
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) const override;
+	virtual int32 GetMinionCount_Implementation() const override;
 	//--------- end CombatInterface --------------
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -77,6 +78,9 @@ protected:
 
 	UPROPERTY()
 	bool bDead = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	int32 MinionCount = 0.f;
 
 protected:
 	// ----- Ability System -----
