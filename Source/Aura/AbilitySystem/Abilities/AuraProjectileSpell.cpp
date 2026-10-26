@@ -25,7 +25,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
 
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-
+	Rotation.Pitch = 0.f;
 	// приподнять полёт снаряда для маленьких монстров, чтобы не летелов землю
 	if (bOverridePitch) {
 		Rotation.Pitch = PitchOverride;
