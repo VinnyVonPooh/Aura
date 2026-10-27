@@ -19,6 +19,7 @@ class AURA_API UAuraAbilitySystemComponent : public UAbilitySystemComponent
 
 public:
 	void AbilityActorInfoSet();
+	// запускаем на сервере
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
@@ -38,4 +39,7 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec,
 							 FActiveGameplayEffectHandle ActiveEffectHandle) const;
+
+	// для репликации на клиент - дублируем эвент AddCharacterAbilities
+	virtual void OnRep_ActivateAbilities() override;
 };
