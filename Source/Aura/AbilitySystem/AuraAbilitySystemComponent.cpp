@@ -3,6 +3,7 @@
 #include "AuraAbilitySystemComponent.h"
 
 #include "Abilities/AuraGameplayAbility.h"
+#include "Aura/AuraLogChannels.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -52,6 +53,46 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 			AbilitySpecInputReleased(AbilitySpec);
 		}
 	}
+}
+
+void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate)
+{
+	// блокируем систему, чтобы она не зменилась до конца функции - сигнал может ловиться там, где система может меняться, что приведёт к
+	// неопределённому результату
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for (auto& AbilitySpec : GetActivatableAbilities()) {
+		if (!Delegate.ExecuteIfBound(AbilitySpec)) {
+			UE_LOG(LogAura, Error, TEXT("Failed to execute delegate in %hs"), __FUNCTION__);
+		}
+	}
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	if (AbilitySpec.Ability) {
+
+		for (const auto& Tag : AbilitySpec.Ability.Get()->AbilityTags) {
+			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities")))) {
+				return Tag;
+			}
+		}
+	}
+
+	return FGameplayTag();
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	if (AbilitySpec.Ability) {
+
+		for (const auto& Tag : AbilitySpec.DynamicAbilityTags) {
+			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("InputTag")))) {
+				return Tag;
+			}
+		}
+	}
+
+	return FGameplayTag();
 }
 
 // Для того чтобы эффект ловился и на клиенте и на сервере необходимо использовать такой нейминг конвеншн Client..._Implementation

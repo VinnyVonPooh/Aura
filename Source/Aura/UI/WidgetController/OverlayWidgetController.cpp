@@ -4,6 +4,7 @@
 
 #include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/AbilitySystem/AuraAttributeSet.h"
+#include "Aura/AbilitySystem/Data/AbilityInfo.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -49,10 +50,20 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	}
 }
 
-void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent) {
+void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent) const
+{
 	if (!AuraAbilitySystemComponent->bStartupAbilitiesGiven) {
 		return;
 	}
 
-	// посылаем информацию об абилках  в виджет - заполняется ui со скилами 
+	// создаём запуск делегата с информацей об абилках в виджет - заполняется ui со скилами
+	FForEachAbility BroadcastDelegate;
+	BroadcastDelegate.BindLambda([this, AuraAbilitySystemComponent](const FGameplayAbilitySpec& AbilitySpec) {
+		auto Info = AbilityInfo->FindAbilityInfoForTag(UAuraAbilitySystemComponent::GetAbilityTagFromSpec(AbilitySpec));
+		Info.InputTag = UAuraAbilitySystemComponent::GetInputTagFromSpec(AbilitySpec);
+		AbilityInfoDelegate.Broadcast(Info);
+	});
+
+	// функция, которая для всех абилок вызовет BroadcastDelegate
+	AuraAbilitySystemComponent->ForEachAbility(BroadcastDelegate);
 }
