@@ -29,13 +29,30 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxManaAttribute())
 		.AddLambda([this](const FOnAttributeChangeData& Data) { OnMaxManaChanged.Broadcast(Data.NewValue); });
 
-	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda([this](const FGameplayTagContainer& AssetTags) {
-		for (const auto& Tag : AssetTags) {
-
-			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Message")))) {
-				const auto* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
-				MessageWidgetRow.Broadcast(*Row);
-			}
+	if (auto* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)) {
+		// если абилки уже даны персонажу, то просто вызываем функцию, если нет, то ждём, когда они будут даны
+		if (AuraASC->bStartupAbilitiesGiven) {
+			OnInitializeStartupAbilities(AuraASC);
+		} else {
+			AuraASC->AbilitiesGivenDelegate.AddUObject(this, &ThisClass::OnInitializeStartupAbilities);
 		}
-	});
+
+		AuraASC->EffectAssetTags.AddLambda([this](const FGameplayTagContainer& AssetTags) {
+			for (const auto& Tag : AssetTags) {
+
+				if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Message")))) {
+					const auto* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+					MessageWidgetRow.Broadcast(*Row);
+				}
+			}
+		});
+	}
+}
+
+void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent) {
+	if (!AuraAbilitySystemComponent->bStartupAbilitiesGiven) {
+		return;
+	}
+
+	// посылаем информацию об абилках  в виджет - заполняется ui со скилами 
 }
