@@ -4,8 +4,6 @@
 
 #include "GameplayTagsManager.h"
 
-FAuraGameplayTags FAuraGameplayTags::GameplayTags;
-
 void FAuraGameplayTags::InitializeNativeGameplayTags()
 {
 	// ------------------ Primary Attributes ------------------
@@ -96,6 +94,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Fire_FireBolt =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBolt"), FString("FireBolt Ability"));
 
+	// ------------------ Cooldown -------------
+
+	GameplayTags.Cooldown_Fire_FireBolt =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Fire.FireBolt"), FString("FireBolt Ability Cooldown"));
+
 	// ------------------ Combat Socket -------------
 
 	GameplayTags.CombatSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.Weapon"), FString("Weapon"));
@@ -132,3 +135,5 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.4"), FString("Input Tag for 4 key"));
 }
+
+FAuraGameplayTags FAuraGameplayTags::GameplayTags;
