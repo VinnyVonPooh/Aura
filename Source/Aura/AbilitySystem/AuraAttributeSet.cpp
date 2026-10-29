@@ -93,8 +93,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute()) {
+		
 		const float LocalIncomingDamage = GetIncomingDamage();
+		// Надо обнулить, оно нужно только для отправки дальше
 		SetIncomingDamage(0.f);
+
 		if (LocalIncomingDamage > 0.f) {
 			const float NewHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
@@ -116,6 +119,12 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 			ShowFloatingText(Props, LocalIncomingDamage, bBlocked, bCriticalHit);
 		}
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute()) {
+		
+		const float LocalIncomingXp = GetIncomingXP();
+		// Надо обнулить, оно нужно только для отправки дальше
+		SetIncomingXP(0.f);
 	}
 }
 
