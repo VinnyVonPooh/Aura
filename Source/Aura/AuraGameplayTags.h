@@ -31,12 +31,17 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
-	// ------------------ Resistance ------------------
+	// ------------------ Resistance Attributes ------------------
 
 	FGameplayTag Attributes_Resistance_Fire;
 	FGameplayTag Attributes_Resistance_Lightning;
 	FGameplayTag Attributes_Resistance_Arcane;
 	FGameplayTag Attributes_Resistance_Physical;
+
+	// ------------------ Meta Attributes ------------------
+
+	FGameplayTag Attributes_Meta_IncomingXP;
+
 	// ------------------ Damage ----------------
 
 	FGameplayTag Damage;

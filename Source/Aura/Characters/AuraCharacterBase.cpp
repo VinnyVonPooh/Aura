@@ -161,6 +161,8 @@ void AAuraCharacterBase::AddCharacterAbilities() const
 
 	auto* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	AuraASC->AddCharacterAbilities(StartupAbilities);
+	// Добавляет и активирует пассивные абилки
+	AuraASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 }
 
 void AAuraCharacterBase::Dissolve()

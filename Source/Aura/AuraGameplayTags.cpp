@@ -52,7 +52,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Secondary.MaxMana"), FString("Maximum amount of Mana obtainable"));
 
-	// ------------------ Resistance ------------------
+	// ------------------ Resistance Attributes ------------------
 
 	GameplayTags.Attributes_Resistance_Fire =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Fire"), FString("Resistance to Fire damage"));
@@ -65,6 +65,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	GameplayTags.Attributes_Resistance_Physical =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Physical"), FString("Resistance to Physical damage"));
+
+	// ------------------ Meta Attributes ------------------
+
+	GameplayTags.Attributes_Meta_IncomingXP =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Meta.IncomingXP"), FString("Incoming XP Meta Attribute"));
 
 	// ------------------ Damage --------------
 
