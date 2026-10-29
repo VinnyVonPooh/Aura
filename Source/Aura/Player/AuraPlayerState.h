@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "AuraPlayerState.generated.h"
 
+class ULevelUpInfo;
 class UAbilitySystemComponent;
 class UAttributeSet;
 
@@ -32,6 +33,10 @@ public:
 	void AddToXP(int32 InXp);
 	void SetXP(int32 InXp);
 	FOnPlayerStatChanged OnXPChangedDelegate;
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
