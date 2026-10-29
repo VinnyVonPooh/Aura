@@ -7,6 +7,7 @@
 #include "GameplayEffectExtension.h"
 #include "Aura/AuraGameplayTags.h"
 #include "Aura/Interaction/CombatInterface.h"
+#include "Aura/Interaction/PlayerInterface.h"
 #include "Aura/Player/AuraPlayerController.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -127,6 +128,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		const float LocalIncomingXp = GetIncomingXP();
 		// Надо обнулить, оно нужно только для отправки дальше
 		SetIncomingXP(0.f);
+
+		if (Props.SourceCharacter->Implements<UPlayerInterface>()) {
+			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXp);
+		}
 	}
 }
 
