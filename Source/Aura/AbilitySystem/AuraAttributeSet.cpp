@@ -93,7 +93,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute()) {
-		
+
 		const float LocalIncomingDamage = GetIncomingDamage();
 		// Надо обнулить, оно нужно только для отправки дальше
 		SetIncomingDamage(0.f);
@@ -106,6 +106,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				if (auto* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor)) {
 					CombatInterface->Die();
 				}
+				// Отправляем сигнал с количеством XP от убитого монстра
+				SendXPEvent(Props);
 
 			} else {
 				// если получен не смертельный урон, активируем абилку
@@ -121,7 +123,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		}
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute()) {
-		
+
 		const float LocalIncomingXp = GetIncomingXP();
 		// Надо обнулить, оно нужно только для отправки дальше
 		SetIncomingXP(0.f);
@@ -171,6 +173,23 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 			// Случай, когда бьют игрока
 			PCTarget->ShowDamageNumber(Damage, Props.TargetCharacter, bInIsBlockedHit, bInIsCriticalHit);
 		}
+	}
+}
+
+// Эвент отправляется после смерти врага и ловится в абилке персонажа и в ней запускается эффект с начислением мета аттрибута IncomingXP
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props) const
+{
+	if (const auto* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter)) {
+		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+
+		const int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
+
+		const auto& GameplayTags = FAuraGameplayTags::Get();
+		FGameplayEventData Payload;
+		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
+		Payload.EventMagnitude = XPReward;
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
 	}
 }
 
