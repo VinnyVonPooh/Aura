@@ -4,6 +4,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Aura/AbilitySystem/Data/LevelUpInfo.h"
 #include "Aura/Player/AuraPlayerController.h"
 #include "Aura/Player/AuraPlayerState.h"
 #include "Aura/UI/HUD/AuraHUD.h"
@@ -64,6 +65,14 @@ int32 AAuraCharacter::GetPlayerLevel_Implementation() const
 	return AuraPlayerState->GetPlayerLevel();
 }
 
+int32 AAuraCharacter::GetXP_Implementation() const
+{
+	const auto* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	return AuraPlayerState->GetXP();
+}
+
 void AAuraCharacter::AddToXP_Implementation(int32 InXP)
 {
 	auto* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
@@ -72,7 +81,48 @@ void AAuraCharacter::AddToXP_Implementation(int32 InXP)
 	AuraPlayerState->AddToXP(InXP);
 }
 
+int32 AAuraCharacter::FindLevelForXP_Implementation(int32 InXP) const
+{
+	const auto* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	return AuraPlayerState->LevelUpInfo->FindLevelForXP(InXP);
+}
+
 void AAuraCharacter::LevelUp_Implementation()
+{
+	
+}
+
+void AAuraCharacter::AddToPlayerLevel_Implementation(int32 LevelToAdd)
+{
+	auto* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	AuraPlayerState->AddToLevel(LevelToAdd);
+}
+
+int32 AAuraCharacter::GetAttributePointsReward_Implementation(int32 Level) const
+{
+	const auto* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	return AuraPlayerState->LevelUpInfo->LevelUpInformation[Level].AttributePointAward;
+}
+
+void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
+{
+	
+}
+
+int32 AAuraCharacter::GetSpellPointsReward_Implementation(int32 Level) const
+{
+	const auto* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	return AuraPlayerState->LevelUpInfo->LevelUpInformation[Level].SpellPointAward;
+}
+
+void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
 {
 	
 }
