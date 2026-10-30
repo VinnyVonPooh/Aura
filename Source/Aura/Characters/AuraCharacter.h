@@ -19,12 +19,13 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 	//--------- CombatInterface --------------
-	virtual int32 GetPlayerLevel() const override;
+	virtual int32 GetPlayerLevel_Implementation() const override;
 	//--------- end CombatInterface --------------
 
 
 	//--------- PlayerInterface --------------
 	virtual void AddToXP_Implementation(int32 InXP) override;
+	virtual void LevelUp_Implementation() override;
 
 	//--------- end PlayerInterface --------------
 protected:

@@ -184,8 +184,9 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 // Эвент отправляется после смерти врага и ловится в абилке персонажа и в ней запускается эффект с начислением мета аттрибута IncomingXP
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props) const
 {
-	if (const auto* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter)) {
-		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+	if (Props.TargetCharacter->Implements<UCombatInterface>()) {
+		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
+
 		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
 
 		const int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);

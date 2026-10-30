@@ -31,8 +31,10 @@ float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 
 	// --------------- Получение значения уровня игрока -----------------
 
-	const auto* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
+	int32 PlayerLevel = 1;
+	if (Spec.GetContext().GetSourceObject()->Implements<UCombatInterface>()) {
+		PlayerLevel = ICombatInterface::Execute_GetPlayerLevel(Spec.GetContext().GetSourceObject());
+	}
 
 	// --------------- Рассчёт финального значения аттрибута MaxMana -----------------
 	return 50.f + 2.5f * Intelligence + 15.f * PlayerLevel;
