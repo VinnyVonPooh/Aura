@@ -3,6 +3,7 @@
 #include "AuraCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "NiagaraComponent.h"
 #include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/AbilitySystem/Data/LevelUpInfo.h"
 #include "Aura/Player/AuraPlayerController.h"
@@ -25,6 +26,8 @@ AAuraCharacter::AAuraCharacter()
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArm->SetupAttachment(GetRootComponent());
+	SpringArm->SetUsingAbsoluteRotation(true);
+	SpringArm->bDoCollisionTest = false;
 	SpringArm->TargetArmLength = 700.f;
 	SpringArm->bUsePawnControlRotation = false;
 
@@ -37,6 +40,10 @@ AAuraCharacter::AAuraCharacter()
 	Camera->bUsePawnControlRotation = false;
 
 	CharacterClass = ECharacterClass::Elementalist;
+
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->bAutoActivate = false;
 }
 
 void AAuraCharacter::PossessedBy(AController* NewController)
@@ -91,7 +98,9 @@ int32 AAuraCharacter::FindLevelForXP_Implementation(int32 InXP) const
 
 void AAuraCharacter::LevelUp_Implementation()
 {
-	
+	// LevelUp_Implementation вызывается только на сервере. Для вызова и на сервере и на клиенте:
+	// Когда сервер вызовет эту функцию, она выполняется и на сервере и на всех клиентах, которым реплицируется этот Actor
+	MulticastLevelUpParticles();
 }
 
 void AAuraCharacter::AddToPlayerLevel_Implementation(int32 LevelToAdd)
@@ -109,10 +118,7 @@ int32 AAuraCharacter::GetAttributePointsReward_Implementation(int32 Level) const
 	return AuraPlayerState->LevelUpInfo->LevelUpInformation[Level].AttributePointAward;
 }
 
-void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
-{
-	
-}
+void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints) {}
 
 int32 AAuraCharacter::GetSpellPointsReward_Implementation(int32 Level) const
 {
@@ -122,10 +128,7 @@ int32 AAuraCharacter::GetSpellPointsReward_Implementation(int32 Level) const
 	return AuraPlayerState->LevelUpInfo->LevelUpInformation[Level].SpellPointAward;
 }
 
-void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
-{
-	
-}
+void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints) {}
 
 void AAuraCharacter::InitAbilityActorInfo()
 {
@@ -146,4 +149,17 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 	// Инициализация аттрибутов (сила, интеллект..) через эффект
 	InitializeDefaultAttributes();
+}
+
+void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
+{
+	if (IsValid(LevelUpNiagaraComponent)) {
+
+		const FVector CameraLocation = Camera->GetComponentLocation();
+		const FVector NiagaraLocation = LevelUpNiagaraComponent->GetComponentLocation();
+		const FRotator ToCameraRotation = (CameraLocation - NiagaraLocation).Rotation();
+
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
