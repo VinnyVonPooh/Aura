@@ -146,12 +146,26 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
 				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
 
-				SetHealth(GetMaxHealth());
-				SetMana(GetMaxMana());
+				bTopOfHealth = true;
+				bTopOfMana = true;
 			}
 
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXp);
 		}
+	}
+}
+
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	// заполняем жизнь и ману после левел апа тут - после расчёта новых параметров 
+	if (Attribute == GetMaxHealthAttribute() && bTopOfHealth) {
+		SetHealth(GetMaxHealth());
+		bTopOfHealth = false;
+	}
+
+	if (Attribute == GetMaxManaAttribute() && bTopOfMana) {
+		SetMana(GetMaxMana());
+		bTopOfMana = false;
 	}
 }
 
