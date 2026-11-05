@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "AuraGameModeBase.generated.h"
 
+class UAbilityInfo;
 class UCharacterClassInfo;
 
 UCLASS()
@@ -17,4 +18,7 @@ public:
 	// таблица с информацией о аттрибутах врагов в зависимости от класса
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Defaults") 
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Ability Info") 
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 };
