@@ -3,6 +3,7 @@
 #include "AuraAbilitySystemComponent.h"
 
 #include "Abilities/AuraGameplayAbility.h"
+#include "Aura/AuraGameplayTags.h"
 #include "Aura/AuraLogChannels.h"
 #include "Aura/Interaction/PlayerInterface.h"
 
@@ -19,6 +20,7 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 
 		if (const auto* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec.Ability)) {
 			AbilitySpec.DynamicAbilityTags.AddTag(AuraAbility->StartupInputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(FAuraGameplayTags::Get().Abilities_Status_Equipped);
 			GiveAbility(AbilitySpec);
 		}
 	}
@@ -105,11 +107,25 @@ FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 	return FGameplayTag();
 }
 
+FGameplayTag UAuraAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	if (AbilitySpec.Ability) {
+
+		for (const auto& StatusTag : AbilitySpec.DynamicAbilityTags) {
+			if (StatusTag.MatchesTag(FAuraGameplayTags::Get().Abilities_Status)) {
+				return StatusTag;
+			}
+		}
+	}
+
+	return FGameplayTag();
+}
+
 void UAuraAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
 	if (GetAvatarActor()->Implements<UPlayerInterface>()) {
 		if (IPlayerInterface::Execute_GetAttributePoints(GetAvatarActor()) > 0) {
-			
+
 			// Вызов функции на сервере
 			ServerUpgradeAttribute(AttributeTag);
 		}

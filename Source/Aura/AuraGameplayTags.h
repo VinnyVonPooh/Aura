@@ -31,16 +31,16 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
+	// ------------------ Meta Attributes ------------------
+
+	FGameplayTag Attributes_Meta_IncomingXP;
+
 	// ------------------ Resistance Attributes ------------------
 
 	FGameplayTag Attributes_Resistance_Fire;
 	FGameplayTag Attributes_Resistance_Lightning;
 	FGameplayTag Attributes_Resistance_Arcane;
 	FGameplayTag Attributes_Resistance_Physical;
-
-	// ------------------ Meta Attributes ------------------
-
-	FGameplayTag Attributes_Meta_IncomingXP;
 
 	// ------------------ Damage ----------------
 
@@ -60,6 +60,18 @@ public:
 
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
+
+	FGameplayTag Abilities_HitReact;
+
+	FGameplayTag Abilities_Status;
+	FGameplayTag Abilities_Status_Locked;
+	FGameplayTag Abilities_Status_Eligible;
+	FGameplayTag Abilities_Status_Unlocked;
+	FGameplayTag Abilities_Status_Equipped;
+
+	FGameplayTag Abilities_Type_Offensive;
+	FGameplayTag Abilities_Type_Passive;
+	FGameplayTag Abilities_Type_None;
 
 	FGameplayTag Abilities_Fire_FireBolt;
 
