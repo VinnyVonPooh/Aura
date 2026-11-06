@@ -185,14 +185,45 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 			MarkAbilitySpecDirty(AbilitySpec);
 
 			// отправка сигнала и на сервер и на клиент
-			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible);
+			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible, 1);
 		}
 	}
 }
 
-void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
+void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGameplayTag& AbilityTag)
 {
-	AbilityStatusChanged.Broadcast(AbilityTag, StatusTag);
+	if (auto* AbilitySpec = GetSpecFromAbilityTag(AbilityTag)) {
+
+		// Отнимаем от очков спелла
+		if (GetAvatarActor()->Implements<UPlayerInterface>()) {
+			IPlayerInterface::Execute_AddToSpellPoints(GetAvatarActor(), -1);
+		}
+
+		// начисляем очко в выбранный спелл
+		FGameplayTag Status = GetStatusFromSpec(*AbilitySpec);
+		const auto GameplayTags = FAuraGameplayTags::Get();
+
+		if (Status.MatchesTagExact(GameplayTags.Abilities_Status_Eligible)) {
+
+			AbilitySpec->DynamicAbilityTags.RemoveTag(GameplayTags.Abilities_Status_Eligible);
+			AbilitySpec->DynamicAbilityTags.AddTag(GameplayTags.Abilities_Status_Unlocked);
+			Status = GameplayTags.Abilities_Status_Unlocked;
+
+		} else if (Status.MatchesTagExact(GameplayTags.Abilities_Status_Equipped) ||
+				   Status.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked)) {
+
+			AbilitySpec->Level += 1;
+		}
+
+		ClientUpdateAbilityStatus(AbilityTag, Status, AbilitySpec->Level);
+		MarkAbilitySpecDirty(*AbilitySpec);
+	}
+}
+
+void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag,
+																		   int32 AbilityLevel)
+{
+	AbilityStatusChanged.Broadcast(AbilityTag, StatusTag, AbilityLevel);
 }
 
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
