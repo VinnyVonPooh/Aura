@@ -17,12 +17,14 @@ public:
 	void CauseDamage(AActor* TargetActor);
 
 protected:
+	UFUNCTION(BlueprintPure)
+	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
+
+	float GetDamageByDamageType(const FGameplayTag& DamageType, float InLevel = 1.f) const;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TMap<FGameplayTag, FScalableFloat> DamageTypes;
-
-	UFUNCTION(BlueprintPure)
-	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 };
