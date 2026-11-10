@@ -2,6 +2,7 @@
 
 #include "OverlayWidgetController.h"
 
+#include "Aura/AuraGameplayTags.h"
 #include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/AbilitySystem/AuraAttributeSet.h"
 #include "Aura/AbilitySystem/Data/AbilityInfo.h"
@@ -38,6 +39,9 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		.AddLambda([this](const FOnAttributeChangeData& Data) { OnMaxManaChanged.Broadcast(Data.NewValue); });
 
 	if (auto* AuraASC = GetAuraASC()) {
+
+		AuraASC->AbilityEquipped.AddUObject(this, &ThisClass::OnAbilityEquipped);
+
 		// если абилки уже даны персонажу, то просто вызываем функцию, если нет, то ждём, когда они будут даны
 		if (AuraASC->bStartupAbilitiesGiven) {
 			BroadcastAbilityInfo();
@@ -75,4 +79,23 @@ void UOverlayWidgetController::OnXpChanged(int32 NewXP)
 		const float XPBarPercent = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelUpRequirement);
 		OnXPPercentChangedDelegate.Broadcast(XPBarPercent);
 	}
+}
+
+void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot,
+												 const FGameplayTag& PrevSlot) const
+{
+	const auto GameplayTags = FAuraGameplayTags::Get();
+
+	// если спелл раньше стоял на каком-то слоте, то чистим инфу на нём
+	FAuraAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PrevSlot;
+	LastSlotInfo.AbilityTag = GameplayTags.Abilities_None;
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+
+	// Отправляем информацию о новом выставленном спелле
+	FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
 }
