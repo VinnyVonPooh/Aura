@@ -11,6 +11,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FSpellGlobeSelectedSignature, bool, bSpendPointsButtonEnabled, bool, bEquipButtonEnabled,
 											  FString, DescriptionString, FString, NextLevelDescriptionString);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitForEquipSelectionSignature, const FGameplayTag&, AbilityType);
+
 struct FSelectedAbility
 {
 	FGameplayTag Ability = FGameplayTag();
@@ -35,11 +37,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpendPointButtonPressed();
 
+	UFUNCTION(BlueprintCallable)
+	void EquipButtonPressed();
+
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Spell")
 	FOnPlayerStatChangedSignature SpellPointsChangedDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Spell")
 	FSpellGlobeSelectedSignature SpellGlobeSelectedDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Spell")
+	FWaitForEquipSelectionSignature WaitForEquipDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Spell")
+	FWaitForEquipSelectionSignature StopWaitForEquipDelegate;
 
 private:
 	static void ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, bool& bShouldEnableSpendPointsButton,
@@ -48,4 +59,6 @@ private:
 	// Запоминаем для логики выбора абилки для вараинта, когда окно открыто во время получения уровня
 	FSelectedAbility SelectedAbility = {FAuraGameplayTags::Get().Abilities_None, FAuraGameplayTags::Get().Abilities_Status_Locked};
 	int32 CurrentSpellPoints = 0;
+
+	bool bWaitingForEquipSelection = false;
 };
