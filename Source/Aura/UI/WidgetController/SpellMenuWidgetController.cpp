@@ -161,6 +161,10 @@ void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTa
 
 	// Останавливаем подсказку куда вставлять спелл
 	StopWaitForEquipDelegate.Broadcast(Info.AbilityTypeTag);
+
+	// убираем обводку спелла - деселект
+	SpellGlobeReassignedDelegate.Broadcast(AbilityTag);
+	SpellGlobeDeselected();
 }
 
 void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints,
