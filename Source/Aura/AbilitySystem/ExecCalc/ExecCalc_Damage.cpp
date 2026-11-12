@@ -207,17 +207,17 @@ void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParam
 {
 
 	const auto& GameplayTags = FAuraGameplayTags::Get();
-	for (const auto& Pair : GameplayTags.FAuraGameplayTags::DamageTypesToDebuffs) {
+	for (const auto& Pair : GameplayTags.DamageTypesToDebuffs) {
 
 		const FGameplayTag DamageType = Pair.Key;
 		const FGameplayTag DebuffType = Pair.Value;
 
 		const float TypeDamage = Spec.GetSetByCallerMagnitude(DamageType, false, -1);
 		if (TypeDamage > 0) {
-			const float SourceDebuffChance = Spec.GetSetByCallerMagnitude(GameplayTags.FAuraGameplayTags::Debuff_Chance, false, -1);
+			const float SourceDebuffChance = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Chance, false, -1);
 
 			// вычисляем сопротивление к дебафу
-			const FGameplayTag& ResistanceTag = GameplayTags.FAuraGameplayTags::DamageTypesToResistances[DamageType];
+			const FGameplayTag& ResistanceTag = GameplayTags.DamageTypesToResistances[DamageType];
 			const auto CaptureDef = InTagsToCaptureDefs[ResistanceTag];
 
 			float TargetDebuffResistance = 0.f;

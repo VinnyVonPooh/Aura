@@ -169,6 +169,12 @@ bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle&
 	}
 	return false;
 }
+void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
+{
+	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		AuraContext->SetIsBlockedHit(bInIsBlockedHit);
+	}
+}
 
 bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
 {
@@ -178,13 +184,6 @@ bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle
 	return false;
 }
 
-void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
-{
-	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
-		AuraContext->SetIsBlockedHit(bInIsBlockedHit);
-	}
-}
-
 void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit)
 {
 	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
@@ -192,8 +191,84 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& E
 	}
 }
 
+bool UAuraAbilitySystemLibrary::IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const auto* AuraContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		return AuraContext->IsSuccessfulDebuff();
+	}
+	return false;
+}
+
+void UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsSuccessfulDebuff)
+{
+	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		AuraContext->SetIsSuccessfulDebuff(bInIsSuccessfulDebuff);
+	}
+}
+
+float UAuraAbilitySystemLibrary::GetDebuffDamage(const FGameplayEffectContextHandle& EffectContextHandle) {
+	if (const auto* AuraContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		return AuraContext->GetDebuffDamage();
+	}
+	return 0.f;
+}
+
+void UAuraAbilitySystemLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContextHandle, float InDebuffDamage)
+{
+	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		AuraContext->SetDebuffDamage(InDebuffDamage);
+	}
+}
+
+float UAuraAbilitySystemLibrary::GetDebuffFrequency(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const auto* AuraContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		return AuraContext->GetDebuffFrequency();
+	}
+	return 0.f;
+}
+
+void UAuraAbilitySystemLibrary::SetDebuffFrequency(FGameplayEffectContextHandle& EffectContextHandle, float InDebuffFrequency)
+{
+	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		AuraContext->SetDebuffFrequency(InDebuffFrequency);
+	}
+}
+
+float UAuraAbilitySystemLibrary::GetDebuffDuration(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const auto* AuraContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		return AuraContext->GetDebuffDuration();
+	}
+	return 0.f;
+}
+
+void UAuraAbilitySystemLibrary::SetDebuffDuration(FGameplayEffectContextHandle& EffectContextHandle, float InDebuffDuration)
+{
+	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		AuraContext->SetDebuffDuration(InDebuffDuration);
+	}
+}
+
+FGameplayTag UAuraAbilitySystemLibrary::GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const auto* AuraContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		if (AuraContext->GetDamageType().IsValid()) {
+			return *AuraContext->GetDamageType();
+		}
+	}
+	return FGameplayTag();
+}
+
+void UAuraAbilitySystemLibrary::SetDamageType(FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDamageType)
+{
+	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		AuraContext->SetDamageType(MakeShared<FGameplayTag>(InDamageType));
+	}
+}
+
 void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,
-														   const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
+                                                           const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
 {
 	FCollisionQueryParams SphereParams;
 	SphereParams.AddIgnoredActors(ActorsToIgnore);

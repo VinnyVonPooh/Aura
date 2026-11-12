@@ -69,10 +69,25 @@ public:
 	}
 
 	bool IsBlockedHit() const { return bIsBlockedHit; }
-	bool IsCriticalHit() const { return bIsCriticalHit; }
-
 	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
+
+	bool IsCriticalHit() const { return bIsCriticalHit; }
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
+
+	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
+	void SetIsSuccessfulDebuff(bool bInIsSuccessfulDebuff) { bIsSuccessfulDebuff = bInIsSuccessfulDebuff; }
+
+	float GetDebuffDamage() const { return DebuffDamage; }
+	void SetDebuffDamage(float InDebuffDamage) { DebuffDamage = InDebuffDamage; }
+
+	float GetDebuffFrequency() const { return DebuffFrequency; }
+	void SetDebuffFrequency(float InDebuffFrequency) { DebuffFrequency = InDebuffFrequency; }
+
+	float GetDebuffDuration() const { return DebuffDuration; }
+	void SetDebuffDuration(float InDebuffDuration) { DebuffDuration = InDebuffDuration; }
+
+	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
+	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType) { DamageType = InDamageType; }
 
 protected:
 	UPROPERTY()
@@ -80,6 +95,20 @@ protected:
 
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	UPROPERTY()
+	bool bIsSuccessfulDebuff = false;
+
+	UPROPERTY()
+	float DebuffDamage = 0.f;
+
+	UPROPERTY()
+	float DebuffFrequency = 0.f;
+
+	UPROPERTY()
+	float DebuffDuration = 0.f;
+
+	TSharedPtr<FGameplayTag> DamageType;
 };
 
 template<>
