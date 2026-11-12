@@ -227,8 +227,18 @@ void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParam
 			// Уменьшаем шанс дебафа в зависимости от сопротивления
 			const float EffectiveDebuffChance = SourceDebuffChance * (100 - TargetDebuffResistance) / 100.f;
 			const bool bDebuff = FMath::RandRange(1, 100) < EffectiveDebuffChance;
-
 			if (bDebuff) {
+				FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+
+				const float SourceDebuffDamage = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Damage, false, -1.f);
+				const float SourceDebuffFrequency = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Frequency, false, -1.f);
+				const float SourceDebuffDuration = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Duration, false, -1.f);
+
+				UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(EffectContextHandle, true);
+				UAuraAbilitySystemLibrary::SetDebuffDamage(EffectContextHandle, SourceDebuffDamage);
+				UAuraAbilitySystemLibrary::SetDebuffFrequency(EffectContextHandle, SourceDebuffFrequency);
+				UAuraAbilitySystemLibrary::SetDebuffDuration(EffectContextHandle, SourceDebuffDuration);
+				UAuraAbilitySystemLibrary::SetDamageType(EffectContextHandle, DamageType);
 			}
 		}
 	}

@@ -263,7 +263,8 @@ FGameplayTag UAuraAbilitySystemLibrary::GetDamageType(const FGameplayEffectConte
 void UAuraAbilitySystemLibrary::SetDamageType(FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDamageType)
 {
 	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
-		AuraContext->SetDamageType(MakeShared<FGameplayTag>(InDamageType));
+		const TSharedPtr<FGameplayTag> DamageType = MakeShared<FGameplayTag>(InDamageType);
+		AuraContext->SetDamageType(DamageType);
 	}
 }
 

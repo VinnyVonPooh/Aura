@@ -228,11 +228,14 @@ public:
 	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldValue) const;
 
 private:
+	void HandleIncomingDamage(const FEffectProperties& Props);
+	void HandleIncomingXP(const FEffectProperties& Props);
+	void HandleDebuff(const FEffectProperties& Props);
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bInIsBlockedHit, bool bInIsCriticalHit) const;
 	void SendXPEvent(const FEffectProperties& Props) const;
 
-	private:
+private:
 	bool bTopOfHealth = false;
 	bool bTopOfMana = false;
 };

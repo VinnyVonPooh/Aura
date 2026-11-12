@@ -99,7 +99,7 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	if (RepBits & (1 << 12)) {
 		Ar << DebuffDuration;
 	}
-	if (RepBits & (1 << 12)) {
+	if (RepBits & (1 << 13)) {
 		if (Ar.IsLoading()) {
 			if (!DamageType.IsValid()) {
 				DamageType = TSharedPtr<FGameplayTag>(new FGameplayTag());

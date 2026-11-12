@@ -95,63 +95,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute()) {
 
-		const float LocalIncomingDamage = GetIncomingDamage();
-		// Надо обнулить, оно нужно только для отправки дальше
-		SetIncomingDamage(0.f);
-
-		if (LocalIncomingDamage > 0.f) {
-			const float NewHealth = GetHealth() - LocalIncomingDamage;
-			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
-			if (const bool bFatal = NewHealth <= 0.f) {
-				if (auto* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor)) {
-					CombatInterface->Die();
-				}
-				// Отправляем сигнал с количеством XP от убитого монстра
-				SendXPEvent(Props);
-
-			} else {
-				// если получен не смертельный урон, активируем абилку
-				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-			}
-
-			// Логика показа виджетов с наносимым уроном
-			const bool bBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
-			const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-			ShowFloatingText(Props, LocalIncomingDamage, bBlocked, bCriticalHit);
-		}
+		HandleIncomingDamage(Props);
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute()) {
 
-		const float LocalIncomingXp = GetIncomingXP();
-		// Надо обнулить, оно нужно только для отправки дальше
-		SetIncomingXP(0.f);
-
-		if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>()) {
-			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
-			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
-			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXp);
-
-			const int32 NumLevelUps = NewLevel - CurrentLevel;
-			if (NumLevelUps > 0) {
-
-				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
-				// TODO - не тот уровень подставляется
-				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
-				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
-
-				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
-				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
-				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
-
-				bTopOfHealth = true;
-				bTopOfMana = true;
-			}
-
-			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXp);
-		}
+		HandleIncomingXP(Props);
 	}
 }
 
@@ -167,6 +115,76 @@ void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute,
 		SetMana(GetMaxMana());
 		bTopOfMana = false;
 	}
+}
+
+void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
+{
+	const float LocalIncomingDamage = GetIncomingDamage();
+	// Надо обнулить, оно нужно только для отправки дальше
+	SetIncomingDamage(0.f);
+
+	if (LocalIncomingDamage > 0.f) {
+		const float NewHealth = GetHealth() - LocalIncomingDamage;
+		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+		if (const bool bFatal = NewHealth <= 0.f) {
+			if (auto* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor)) {
+				CombatInterface->Die();
+			}
+			// Отправляем сигнал с количеством XP от убитого монстра
+			SendXPEvent(Props);
+
+		} else {
+			// если получен не смертельный урон, активируем абилку
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		}
+
+		// Логика показа виджетов с наносимым уроном
+		const bool bBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+		const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+		ShowFloatingText(Props, LocalIncomingDamage, bBlocked, bCriticalHit);
+
+		if (UAuraAbilitySystemLibrary::IsSuccessfulDebuff(Props.EffectContextHandle)) {
+			HandleDebuff(Props);
+		}
+	}
+}
+
+void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
+{
+	const float LocalIncomingXp = GetIncomingXP();
+	// Надо обнулить, оно нужно только для отправки дальше
+	SetIncomingXP(0.f);
+
+	if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>()) {
+		const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+		const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+		const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXp);
+
+		const int32 NumLevelUps = NewLevel - CurrentLevel;
+		if (NumLevelUps > 0) {
+
+			IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+			// TODO - не тот уровень подставляется
+			const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
+			const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
+
+			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+			IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
+			IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
+
+			bTopOfHealth = true;
+			bTopOfMana = true;
+		}
+
+		IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXp);
+	}
+}
+
+void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
+{
 }
 
 void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const
@@ -332,3 +350,4 @@ void UAuraAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& O
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, PhysicalResistance, OldValue);
 }
+
