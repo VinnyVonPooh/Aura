@@ -149,6 +149,8 @@ void AAuraEnemy::InitAbilityActorInfo()
 		// инициализация аттрибутов врага
 		InitializeDefaultAttributes();
 	}
+
+	OnASCRegistered.Broadcast(AbilitySystemComponent);
 }
 
 void AAuraEnemy::InitializeDefaultAttributes() const

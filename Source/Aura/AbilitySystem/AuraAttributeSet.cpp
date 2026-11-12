@@ -208,9 +208,6 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 	Effect->Period = DebuffFrequency;
 	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
 
-	// даём тег, чтобы по нему потом можно было стартануть анимацию дебафа
-	Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
-
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;
 
@@ -222,11 +219,14 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
 	ModifierInfo.Attribute = GetIncomingDamageAttribute();
 
-	if (const auto* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f)) {
+	if (auto* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f)) {
 		auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(MutableSpec->GetContext().Get());
 		const TSharedPtr<FGameplayTag> DebuffDamageType = MakeShared<FGameplayTag>(DamageType);
 
 		AuraContext->SetDamageType(DebuffDamageType);
+
+		// даём тег, чтобы по нему потом можно было стартануть анимацию дебафа
+		MutableSpec->DynamicGrantedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
 
 		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 	}

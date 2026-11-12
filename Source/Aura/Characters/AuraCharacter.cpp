@@ -172,6 +172,8 @@ void AAuraCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 
+	OnASCRegistered.Broadcast(AbilitySystemComponent);
+
 	// Инициализация хада - создание виджета, привязка контроллера, сигналы
 	if (auto* AuraPlayerController = Cast<AAuraPlayerController>(GetController())) {
 		if (auto* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD())) {
