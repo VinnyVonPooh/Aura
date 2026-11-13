@@ -136,7 +136,7 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 
 		if (const bool bFatal = NewHealth <= 0.f) {
 			if (auto* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor)) {
-				CombatInterface->Die();
+				CombatInterface->Die(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 			}
 			// Отправляем сигнал с количеством XP от убитого монстра
 			SendXPEvent(Props);

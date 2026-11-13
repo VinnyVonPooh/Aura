@@ -32,7 +32,7 @@ public:
 
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
-	virtual void Die() override; // Вызывается только на сервере
+	virtual void Die(const FVector& DeathImpulse) override; // Вызывается только на сервере
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
@@ -46,7 +46,7 @@ public:
 	//--------- end CombatInterface --------------
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath(); // Для всех маших - сервер, клиент
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse); // Для всех маших - сервер, клиент
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Combat")
