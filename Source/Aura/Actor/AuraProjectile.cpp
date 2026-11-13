@@ -86,9 +86,17 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		// Применение на OtherActor эффекта, дамажищего при оверлапе
 		// Применяем только на сервере
 		if (auto* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor)) {
-			
+
 			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
 			DamageEffectParams.DeathImpulse = DeathImpulse;
+
+			if (FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance) {
+				FRotator Rotator = GetActorRotation();
+				Rotator.Pitch = 15.f;
+				const FVector KnockbackDirection = Rotator.Vector();
+				const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.KnockbackForceMagnitude;
+				DamageEffectParams.KnockbackImpulse = KnockbackForce;
+			}
 
 			// устанавливаем тут, таргет стал известен, до этого проставляли nullptr
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;

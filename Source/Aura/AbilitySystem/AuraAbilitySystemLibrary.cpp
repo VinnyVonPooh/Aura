@@ -206,7 +206,8 @@ void UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(FGameplayEffectContextHand
 	}
 }
 
-float UAuraAbilitySystemLibrary::GetDebuffDamage(const FGameplayEffectContextHandle& EffectContextHandle) {
+float UAuraAbilitySystemLibrary::GetDebuffDamage(const FGameplayEffectContextHandle& EffectContextHandle)
+{
 	if (const auto* AuraContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
 		return AuraContext->GetDebuffDamage();
 	}
@@ -283,8 +284,23 @@ void UAuraAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle& Ef
 	}
 }
 
+FVector UAuraAbilitySystemLibrary::GetKnockbackImpulse(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const auto* AuraContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		return AuraContext->GetKnockbackImpulse();
+	}
+	return FVector::ZeroVector;
+}
+
+void UAuraAbilitySystemLibrary::SetKnockbackImpulse(FGameplayEffectContextHandle& EffectContextHandle, const FVector& InKnockbackImpulse)
+{
+	if (auto* AuraContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		AuraContext->SetKnockbackImpulse(InKnockbackImpulse);
+	}
+}
+
 void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,
-                                                           const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
+														   const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
 {
 	FCollisionQueryParams SphereParams;
 	SphereParams.AddIgnoredActors(ActorsToIgnore);
@@ -322,6 +338,7 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	auto EffectContextHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(SourceAvatarActor);
 	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
+	SetKnockbackImpulse(EffectContextHandle, DamageEffectParams.KnockbackImpulse);
 
 	const auto SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(
 		DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);

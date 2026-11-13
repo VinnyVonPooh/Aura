@@ -134,7 +134,7 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		const float NewHealth = GetHealth() - LocalIncomingDamage;
 		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
 
-		if (const bool bFatal = NewHealth <= 0.f) {
+		if (NewHealth <= 0.f) {
 			if (auto* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor)) {
 				CombatInterface->Die(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 			}
@@ -146,6 +146,11 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+
+			const FVector KnockbackImpulse = UAuraAbilitySystemLibrary::GetKnockbackImpulse(Props.EffectContextHandle);
+			if (!KnockbackImpulse.IsNearlyZero(1.f)) {
+				Props.TargetCharacter->LaunchCharacter(KnockbackImpulse, true, true);
+			}
 		}
 
 		// Логика показа виджетов с наносимым уроном

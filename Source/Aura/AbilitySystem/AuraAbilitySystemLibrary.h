@@ -100,6 +100,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayEffects")
 	static void SetDeathImpulse(FGameplayEffectContextHandle& EffectContextHandle, const FVector& InDeathImpulse);
 
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayEffects")
+	static FVector GetKnockbackImpulse(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayEffects")
+	static void SetKnockbackImpulse(FGameplayEffectContextHandle& EffectContextHandle, const FVector& InKnockbackImpulse);
+
 	// ----------------------------------
 
 	// получение всех акторов, которые попадают в сферу урона врагом
