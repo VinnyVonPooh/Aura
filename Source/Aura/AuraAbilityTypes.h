@@ -48,6 +48,9 @@ struct FDamageEffectParams
 
 	UPROPERTY()
 	float DeathImpulseMagnitude = 0.f;
+
+	UPROPERTY()
+	FVector DeathImpulse = FVector::Zero();
 };
 
 
@@ -92,6 +95,9 @@ public:
 	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
 	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType) { DamageType = InDamageType; }
 
+	FVector GetDeathImpulse() const { return DeathImpulse; }
+	void SetDeathImpulse(const FVector& InDeathImpulse) { DeathImpulse = InDeathImpulse; }
+
 protected:
 	UPROPERTY()
 	bool bIsBlockedHit = false;
@@ -112,6 +118,9 @@ protected:
 	float DebuffDuration = 0.f;
 
 	TSharedPtr<FGameplayTag> DamageType;
+
+	UPROPERTY()
+	FVector DeathImpulse = FVector::Zero();
 };
 
 template<>
