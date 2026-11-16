@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class UNiagaraSystem;
 class UDamageTextComponent;
 class USplineComponent;
 class UAuraAbilitySystemComponent;
@@ -67,6 +68,7 @@ private:
 
 private:
 	// ------------------ Логика перемещения мышкой ----------
+	void AutoRun();
 
 	FVector CachedDestination = FVector::Zero();
 	float FollowTime = 0.f;
@@ -80,7 +82,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
 
-	void AutoRun();
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
 
 private:
 	// ----------------- Подсветка врагов --------------------
