@@ -45,6 +45,11 @@ void AAuraProjectile::BeginPlay()
 
 void AAuraProjectile::Destroyed()
 {
+	if (LoopingSoundComponent) {
+		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
+	}
+
 	if (!bHit && !HasAuthority()) {
 		OnHit();
 	}
@@ -57,6 +62,7 @@ void AAuraProjectile::OnHit()
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	if (LoopingSoundComponent) {
 		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
 	}
 	bHit = true;
 }

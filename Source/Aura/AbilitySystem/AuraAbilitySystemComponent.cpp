@@ -55,7 +55,7 @@ void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputT
 	}
 }
 
-void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
+void UAuraAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) {
 		return;
@@ -64,7 +64,30 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 	for (auto& AbilitySpec : GetActivatableAbilities()) {
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) {
 
+			AbilitySpecInputPressed(AbilitySpec);
+			if (AbilitySpec.IsActive()) {
+				// Сигнал в абилку о нажатии на кнопку
+				InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, AbilitySpec.Handle,
+									  AbilitySpec.ActivationInfo.GetActivationPredictionKey());
+				
+			}
+		}
+	}
+}
+
+void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) {
+		return;
+	}
+
+	for (auto& AbilitySpec : GetActivatableAbilities()) {
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) && AbilitySpec.IsActive()) {
+
 			AbilitySpecInputReleased(AbilitySpec);
+			// Сигнал в абилку об отпускании кнопки
+			InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, AbilitySpec.Handle,
+								  AbilitySpec.ActivationInfo.GetActivationPredictionKey());
 		}
 	}
 }
@@ -239,13 +262,13 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 }
 
 void UAuraAbilitySystemComponent::ClientEquipAbility_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& Status,
-	const FGameplayTag& Slot, const FGameplayTag& PrevSlot)
+																	const FGameplayTag& Slot, const FGameplayTag& PrevSlot)
 {
 	AbilityEquipped.Broadcast(AbilityTag, Status, Slot, PrevSlot);
 }
 
 bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
-                                                              FString& OutNextLevelDescription)
+															  FString& OutNextLevelDescription)
 {
 	if (const auto* AbilitySpec = GetSpecFromAbilityTag(AbilityTag)) {
 
