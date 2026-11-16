@@ -13,4 +13,17 @@ class AURA_API UAuraFireBolt : public UAuraProjectileSpell
 public:
 	virtual FString GetDescription(int32 Level) const override;
 	virtual FString GetNextLevelDescription(int32 Level) const override;
+
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, AActor* HomingTarget, bool bOverridePitch = false,
+						  float PitchOverride = 0.f);
+
+protected:
+	int32 GetNumProjectiles(int32 Level) const;
+
+	UPROPERTY(EditDefaultsOnly, Category = "FireBolt")
+	float ProjectileSpread = 90;
+
+	UPROPERTY(EditDefaultsOnly, Category = "FireBolt")
+	float MaxNumProjectiles = 5;
 };
