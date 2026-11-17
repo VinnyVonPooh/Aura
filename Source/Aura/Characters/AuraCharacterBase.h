@@ -31,6 +31,7 @@ public:
 	//--------- CombatInterface --------------
 
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
+	virtual USkeletalMeshComponent* GetWeapon_Implementation() const override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 	virtual void Die(const FVector& DeathImpulse) override; // Вызывается только на сервере
 	virtual bool IsDead_Implementation() const override;
