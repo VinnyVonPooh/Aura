@@ -66,9 +66,17 @@ void UAuraAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& Inp
 
 			AbilitySpecInputPressed(AbilitySpec);
 			if (AbilitySpec.IsActive()) {
-				// Сигнал в абилку о нажатии на кнопку
-				InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, AbilitySpec.Handle,
-									  AbilitySpec.ActivationInfo.GetActivationPredictionKey());
+
+				// Сигнал в абилку об отпускании кнопки
+				// Из-за Instanced Per Execution есть несколько инстансов, нужно выбрать активный
+				for (const UGameplayAbility* AbilityInstance : AbilitySpec.GetAbilityInstances()) {
+					if (!AbilityInstance || !AbilityInstance->IsActive()) {
+						continue;
+					}
+
+					InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, AbilityInstance->GetCurrentAbilitySpecHandle(),
+										  AbilityInstance->GetCurrentActivationInfo().GetActivationPredictionKey());
+				}
 				
 			}
 		}
@@ -81,13 +89,22 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 		return;
 	}
 
-	for (auto& AbilitySpec : GetActivatableAbilities()) {
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) && AbilitySpec.IsActive()) {
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities()) {
+		if (!AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) || !AbilitySpec.IsActive()) {
+			continue;
+		}
 
-			AbilitySpecInputReleased(AbilitySpec);
-			// Сигнал в абилку об отпускании кнопки
-			InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, AbilitySpec.Handle,
-								  AbilitySpec.ActivationInfo.GetActivationPredictionKey());
+		AbilitySpecInputReleased(AbilitySpec);
+
+		// Сигнал в абилку об отпускании кнопки
+		// Из-за Instanced Per Execution есть несколько инстансов, нужно выбрать активный
+		for (const UGameplayAbility* AbilityInstance : AbilitySpec.GetAbilityInstances()) {
+			if (!AbilityInstance || !AbilityInstance->IsActive()) {
+				continue;
+			}
+
+			InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, AbilityInstance->GetCurrentAbilitySpecHandle(),
+								  AbilityInstance->GetCurrentActivationInfo().GetActivationPredictionKey());
 		}
 	}
 }
