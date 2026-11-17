@@ -96,7 +96,6 @@ public:
 	FGameplayTag Cooldown_Fire_FireBolt;
 	FGameplayTag Cooldown_Lightning_Electrocute;
 
-
 	// ------------------ Combat Socket -------------
 
 	FGameplayTag CombatSocket_Weapon;
@@ -122,6 +121,13 @@ public:
 
 	FGameplayTag InputTag_Passive_1;
 	FGameplayTag InputTag_Passive_2;
+
+	// ------------------ Player Tags ----------------
+
+	FGameplayTag Player_Block_InputPressed;
+	FGameplayTag Player_Block_InputHeld;
+	FGameplayTag Player_Block_InputReleased;
+	FGameplayTag Player_Block_CursorTrace;
 
 private:
 	static FAuraGameplayTags GameplayTags;

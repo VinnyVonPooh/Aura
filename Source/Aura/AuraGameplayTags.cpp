@@ -193,6 +193,20 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Passive.1"), FString("Input Tag for Passive 1"));
 	GameplayTags.InputTag_Passive_2 =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Passive.2"), FString("Input Tag for Passive 2"));
+
+	// ------------------ Player Tags ----------------
+
+	GameplayTags.Player_Block_InputPressed =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputPressed"), FString("Block InputPressed"));
+
+	GameplayTags.Player_Block_InputHeld =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputHeld"), FString("Block InputHeld"));
+
+	GameplayTags.Player_Block_InputReleased =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputReleased"), FString("Block InputReleased"));
+
+	GameplayTags.Player_Block_CursorTrace =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.CursorTrace"), FString("Block CursorTrace"));
 }
 
 FAuraGameplayTags FAuraGameplayTags::GameplayTags;
