@@ -34,6 +34,7 @@ public:
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() const override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 	virtual void Die(const FVector& DeathImpulse) override; // Вызывается только на сервере
+	virtual FOnDeath& GetOnDeathDelegate() override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
@@ -43,7 +44,6 @@ public:
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() const override;
 	virtual FOnASCRegistered& GetOnOnASCRegisteredDelegate() override;
-	virtual FOnDeath& GetOnDeathDelegate() override;
 	//--------- end CombatInterface --------------
 
 	UFUNCTION(NetMulticast, Reliable)

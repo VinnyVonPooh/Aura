@@ -59,6 +59,8 @@ public:
 
 	virtual void Die(const FVector& DeathImpulse) = 0;
 
+	virtual FOnDeath& GetOnDeathDelegate() = 0;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool IsDead() const;
 
@@ -87,5 +89,4 @@ public:
 	void SetInShockLoop(bool bInLoop);
 
 	virtual FOnASCRegistered& GetOnOnASCRegisteredDelegate() = 0;
-	virtual FOnDeath& GetOnDeathDelegate() = 0;
 };
