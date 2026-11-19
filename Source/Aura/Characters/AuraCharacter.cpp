@@ -7,6 +7,7 @@
 #include "Aura/AuraGameplayTags.h"
 #include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/AbilitySystem/Data/LevelUpInfo.h"
+#include "Aura/AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Aura/Player/AuraPlayerController.h"
 #include "Aura/Player/AuraPlayerState.h"
 #include "Aura/UI/HUD/AuraHUD.h"
@@ -191,6 +192,15 @@ void AAuraCharacter::InitAbilityActorInfo()
 	InitializeDefaultAttributes();
 }
 
+void AAuraCharacter::OnRep_Burned()
+{
+	if (bIsBurned) {
+		BurnDebuffComponent->Activate();
+	} else {
+		BurnDebuffComponent->Deactivate();
+	}
+}
+
 void AAuraCharacter::OnRep_Stunned()
 {
 	// теги устанавливаются в UAuraAttributeSet, но не переносятся по сети, поэтому устанавливаем ещё и тут
@@ -202,13 +212,14 @@ void AAuraCharacter::OnRep_Stunned()
 		BlockedTags.AddTag(GameplayTags.Player_Block_InputHeld);
 		BlockedTags.AddTag(GameplayTags.Player_Block_InputPressed);
 		BlockedTags.AddTag(GameplayTags.Player_Block_InputReleased);
-		if(bIsStunned) {
+		if (bIsStunned) {
 			AuraASC->AddLooseGameplayTags(BlockedTags);
+			StunDebuffComponent->Activate();
 		} else {
 			AuraASC->RemoveLooseGameplayTags(BlockedTags);
+			StunDebuffComponent->Deactivate();
 		}
 	}
-
 }
 
 void AAuraCharacter::MulticastLevelUpParticles_Implementation() const

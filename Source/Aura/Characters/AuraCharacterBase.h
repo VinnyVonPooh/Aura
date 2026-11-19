@@ -54,7 +54,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Stunned, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_Burned, BlueprintReadOnly)
+	bool bIsBurned = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Stunned, BlueprintReadOnly)
 	bool bIsStunned = false;
 
 	FOnASCRegistered OnASCRegistered;
@@ -66,6 +69,9 @@ protected:
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level) const;
 	void AddCharacterAbilities() const;
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	UFUNCTION()
+	virtual void OnRep_Burned();
 
 	UFUNCTION()
 	virtual void OnRep_Stunned();
@@ -103,6 +109,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed = 600.f;
