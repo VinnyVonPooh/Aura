@@ -25,6 +25,7 @@ public:
 	AAuraCharacterBase();
 	virtual void BeginPlay() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const;
 
@@ -53,6 +54,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
+	UPROPERTY(ReplicatedUsing=OnRep_Stunned, BlueprintReadOnly)
+	bool bIsStunned = false;
+
 	FOnASCRegistered OnASCRegistered;
 	FOnDeath OnDeath;
 
@@ -60,10 +64,13 @@ protected:
 	virtual void InitAbilityActorInfo();
 	virtual void InitializeDefaultAttributes() const; // Инициализация аттрибутов (сила, интеллект..) через эффект
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level) const;
+	void AddCharacterAbilities() const;
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	UFUNCTION()
+	virtual void OnRep_Stunned();
 
 protected:
-	void AddCharacterAbilities() const;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
@@ -96,6 +103,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 600.f;
 
 protected:
 	// ----- Ability System -----
@@ -135,7 +145,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
-	// Пассивные вечные абилки типа - слушать все эвенты изменения атрибутов и перенаправлять их 
+	// Пассивные вечные абилки типа - слушать все эвенты изменения атрибутов и перенаправлять их
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 

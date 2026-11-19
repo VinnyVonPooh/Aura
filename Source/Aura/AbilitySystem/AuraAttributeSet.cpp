@@ -202,6 +202,7 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 	auto EffectContext = Props.SourceASC->MakeEffectContext();
 	EffectContext.AddSourceObject(Props.SourceAvatarActor);
 	const FGameplayTag DamageType = UAuraAbilitySystemLibrary::GetDamageType(Props.EffectContextHandle);
+	const FGameplayTag DebuffType = GameplayTags.DamageTypesToDebuffs[DamageType];
 	const float DebuffDamage = UAuraAbilitySystemLibrary::GetDebuffDamage(Props.EffectContextHandle);
 	const float DebuffFrequency = UAuraAbilitySystemLibrary::GetDebuffFrequency(Props.EffectContextHandle);
 	const float DebuffDuration = UAuraAbilitySystemLibrary::GetDebuffDuration(Props.EffectContextHandle);
@@ -231,7 +232,14 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 		AuraContext->SetDamageType(DebuffDamageType);
 
 		// даём тег, чтобы по нему потом можно было стартануть анимацию дебафа
-		MutableSpec->DynamicGrantedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+		MutableSpec->DynamicGrantedTags.AddTag(DebuffType);
+		// в стане даём теги которые запретят инпут
+		if (DebuffType.MatchesTagExact(GameplayTags.Debuff_Stun)) {
+			MutableSpec->DynamicGrantedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+			MutableSpec->DynamicGrantedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+			MutableSpec->DynamicGrantedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+			MutableSpec->DynamicGrantedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+		}
 
 		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 	}

@@ -44,6 +44,7 @@ public:
 
 protected:
 	virtual void InitAbilityActorInfo() override;
+	virtual void OnRep_Stunned() override;
 
 private:
 	UFUNCTION(NetMulticast, Reliable)

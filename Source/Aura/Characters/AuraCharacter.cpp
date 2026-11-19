@@ -4,6 +4,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "NiagaraComponent.h"
+#include "Aura/AuraGameplayTags.h"
 #include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/AbilitySystem/Data/LevelUpInfo.h"
 #include "Aura/Player/AuraPlayerController.h"
@@ -174,6 +175,11 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
 
+	// Связка добавления тега и запуска стана
+	GetAbilitySystemComponent()
+		->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved)
+		.AddUObject(this, &ThisClass::StunTagChanged);
+
 	// Инициализация хада - создание виджета, привязка контроллера, сигналы
 	if (auto* AuraPlayerController = Cast<AAuraPlayerController>(GetController())) {
 		if (auto* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD())) {
@@ -183,6 +189,26 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 	// Инициализация аттрибутов (сила, интеллект..) через эффект
 	InitializeDefaultAttributes();
+}
+
+void AAuraCharacter::OnRep_Stunned()
+{
+	// теги устанавливаются в UAuraAttributeSet, но не переносятся по сети, поэтому устанавливаем ещё и тут
+	if (auto* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)) {
+		const auto& GameplayTags = FAuraGameplayTags::Get();
+
+		FGameplayTagContainer BlockedTags;
+		BlockedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+		if(bIsStunned) {
+			AuraASC->AddLooseGameplayTags(BlockedTags);
+		} else {
+			AuraASC->RemoveLooseGameplayTags(BlockedTags);
+		}
+	}
+
 }
 
 void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
