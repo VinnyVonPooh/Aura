@@ -45,6 +45,8 @@ public:
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() const override;
 	virtual FOnASCRegistered& GetOnOnASCRegisteredDelegate() override;
+	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
+	virtual bool IsBeingShocked_Implementation() const override;
 	//--------- end CombatInterface --------------
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -59,6 +61,9 @@ public:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Stunned, BlueprintReadOnly)
 	bool bIsStunned = false;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bIsBeingShocked = false;
 
 	FOnASCRegistered OnASCRegistered;
 	FOnDeath OnDeath;
