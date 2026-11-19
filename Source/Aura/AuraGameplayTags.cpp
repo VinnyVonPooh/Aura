@@ -139,11 +139,22 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Type_None =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Type.None"), FString("Ability Type None"));
 
+	// Spells
 	GameplayTags.Abilities_Fire_FireBolt =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBolt"), FString("FireBolt Ability"));
 
 	GameplayTags.Abilities_Lightning_Electrocute =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Lightning.Electrocute"), FString("Electrocute Ability"));
+
+	// Passive spells
+	GameplayTags.Abilities_Passive_HaloOfProtection = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Passive.HaloOfProtection"), FString("HaloOfProtection Passive Ability"));
+
+	GameplayTags.Abilities_Passive_LifeSiphon =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Passive.LifeSiphon"), FString("LifeSiphon Passive Ability"));
+
+	GameplayTags.Abilities_Passive_ManaSiphon =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Passive.ManaSiphon"), FString("ManaSiphon Passive Ability"));
 
 	// ------------------ Cooldown -------------
 
