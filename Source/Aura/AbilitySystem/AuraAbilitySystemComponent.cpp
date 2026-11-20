@@ -229,7 +229,7 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 		if (!Info.AbilityTag.IsValid()) {
 			continue;
 		}
-		if (Level > Info.LevelRequirement) {
+		if (Level < Info.LevelRequirement) {
 			continue;
 		}
 		// проверка, что абилка не была уже предоставлена персонажу
