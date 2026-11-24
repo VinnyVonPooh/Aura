@@ -118,6 +118,7 @@ public:
 
 	// ------------------ Input Tags ------------------
 
+	FGameplayTag InputTag;
 	FGameplayTag InputTag_LMB; // Левая кнопка мыши
 	FGameplayTag InputTag_RMB; // Правая кнопка мыши
 	FGameplayTag InputTag_1;
