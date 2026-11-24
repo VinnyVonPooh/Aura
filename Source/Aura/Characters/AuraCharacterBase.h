@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "AuraCharacterBase.generated.h"
 
+class UPassiveNiagaraComponent;
 class UDebuffNiagaraComponent;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -24,6 +25,7 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 public:
 	AAuraCharacterBase();
 	virtual void BeginPlay() override;
+	virtual  void Tick(float DeltaSeconds) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -112,14 +114,31 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 600.f;
+
+protected:
+	//-------------- NiagaraComponents ----------------
+
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float BaseWalkSpeed = 600.f;
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	TObjectPtr<USceneComponent> EffectAttachComponent;
+
+	//-------------- end NiagaraComponents ----------------
 
 protected:
 	// ----- Ability System -----

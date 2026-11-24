@@ -282,6 +282,7 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 					}
 					// Если пассивная абилка
 					if (IsPassiveAbility(*SpecWithSlot)) {
+						MulticastActivatePassiveEffect(GetAbilityTagFromSpec(*SpecWithSlot), false);
 						DeactivatePassiveAbility.Broadcast(GetAbilityTagFromSpec(*SpecWithSlot));
 					}
 
@@ -293,22 +294,23 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 			if (!AbilityHasAnySlot(*AbilitySpec)) {
 				if (IsPassiveAbility(*AbilitySpec)) {
 					TryActivateAbility(AbilitySpec->Handle);
+					MulticastActivatePassiveEffect(AbilityTag, true);
 				}
 			}
 			// Чистим старый слот, записываем новый
 			AssignSlotToAbility(*AbilitySpec, Slot);
 
 			// TODO Проверить, надо ли это
-			/*// ставим абилке статус экипированной
+			// ставим абилке статус экипированной
 			if (Status.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked)) {
 				AbilitySpec->DynamicAbilityTags.RemoveTag(GameplayTags.Abilities_Status_Unlocked);
 				AbilitySpec->DynamicAbilityTags.AddTag(GameplayTags.Abilities_Status_Equipped);
-			}*/
+			}
 
 			MarkAbilitySpecDirty(*AbilitySpec);
 		}
 
-		ClientEquipAbility_Implementation(AbilityTag, GameplayTags.Abilities_Status_Equipped, Slot, PrevSlot);
+		ClientEquipAbility(AbilityTag, GameplayTags.Abilities_Status_Equipped, Slot, PrevSlot);
 	}
 }
 
@@ -423,6 +425,19 @@ void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGa
 	}
 }
 
+
+// Для того чтобы эффект ловился и на клиенте и на сервере необходимо использовать такой нейминг конвеншн Client..._Implementation
+void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
+																	 const FGameplayEffectSpec& EffectSpec,
+																	 FActiveGameplayEffectHandle ActiveEffectHandle) const
+{
+	FGameplayTagContainer TagContainer;
+	EffectSpec.GetAllAssetTags(TagContainer);
+
+	EffectAssetTags.Broadcast(TagContainer);
+}
+
+
 void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag,
 																		   int32 AbilityLevel)
 {
@@ -440,13 +455,7 @@ void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 	}
 }
 
-// Для того чтобы эффект ловился и на клиенте и на сервере необходимо использовать такой нейминг конвеншн Client..._Implementation
-void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
-																	 const FGameplayEffectSpec& EffectSpec,
-																	 FActiveGameplayEffectHandle ActiveEffectHandle) const
+void UAuraAbilitySystemComponent::MulticastActivatePassiveEffect_Implementation(const FGameplayTag& AbilityTag, bool bActivate)
 {
-	FGameplayTagContainer TagContainer;
-	EffectSpec.GetAllAssetTags(TagContainer);
-
-	EffectAssetTags.Broadcast(TagContainer);
+	ActivatePassiveEffect.Broadcast(AbilityTag, bActivate);
 }
