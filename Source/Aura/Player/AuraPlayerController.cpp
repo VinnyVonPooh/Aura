@@ -7,9 +7,9 @@
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "NiagaraFunctionLibrary.h"
-#include "RenderGraphResources.h"
 #include "Aura/AuraGameplayTags.h"
 #include "Aura/AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Aura/Actor/MagicCircle.h"
 #include "Aura/Input/AuraInputComponent.h"
 #include "Aura/Interaction/EnemyInterface.h"
 #include "Aura/UI/Widget/DamageTextComponent.h"
@@ -30,6 +30,22 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 	// Авто движение персонажа к точке нажатия кнопкой мыши
 	AutoRun();
+
+	UpdateMagicCircleLocation();
+}
+
+void AAuraPlayerController::ShowMagicCircle()
+{
+	if (!IsValid(MagicCircle)) {
+		MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass);
+	}
+}
+
+void AAuraPlayerController::HideMagicCircle()
+{
+	if (IsValid(MagicCircle)) {
+		MagicCircle->Destroy();
+	}
 }
 
 // Вызывается на сервере
@@ -76,6 +92,13 @@ void AAuraPlayerController::SetupInputComponent()
 
 	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased,
 										   &ThisClass::AbilityInputTagHeld);
+}
+
+void AAuraPlayerController::UpdateMagicCircleLocation()
+{
+	if (IsValid(MagicCircle)) {
+		MagicCircle->SetActorLocation(CursorHit.ImpactPoint);
+	}
 }
 
 void AAuraPlayerController::ShiftPressed()

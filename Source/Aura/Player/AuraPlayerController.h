@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class AMagicCircle;
 class UNiagaraSystem;
 class UDamageTextComponent;
 class USplineComponent;
@@ -30,11 +31,30 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bInIsBlockedHit, bool bInIsCriticalHit);
 
+	UFUNCTION(BlueprintCallable)
+	void ShowMagicCircle();
+
+	UFUNCTION(BlueprintCallable)
+	void HideMagicCircle();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
 private:
+	void UpdateMagicCircleLocation();
+
+	void ShiftPressed();
+	void ShiftReleased();
+
+	void Move(const FInputActionValue& InputActionValue);
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UAuraAbilitySystemComponent* GetASC();
+
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> AuraContext; // Связка всех InputAction и клавиш
 
@@ -53,18 +73,13 @@ private:
 	UPROPERTY(EditDefaultsOnly) // класс компонента для показа текста с уроном
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AMagicCircle> MagicCircleClass;
+
+	UPROPERTY()
+	TObjectPtr<AMagicCircle> MagicCircle;
+
 	bool bShiftKeyDown = false;
-
-	void ShiftPressed();
-	void ShiftReleased();
-
-	void Move(const FInputActionValue& InputActionValue);
-
-	void AbilityInputTagPressed(FGameplayTag InputTag);
-	void AbilityInputTagReleased(FGameplayTag InputTag);
-	void AbilityInputTagHeld(FGameplayTag InputTag);
-
-	UAuraAbilitySystemComponent* GetASC();
 
 private:
 	// ------------------ Логика перемещения мышкой ----------
