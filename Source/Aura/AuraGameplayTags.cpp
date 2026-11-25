@@ -146,6 +146,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Lightning_Electrocute =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Lightning.Electrocute"), FString("Electrocute Ability"));
 
+	GameplayTags.Abilities_Arcane_ArcaneShards =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Arcane.ArcaneShards"), FString("ArcaneShards Ability"));
+
 	// Passive spells
 	GameplayTags.Abilities_Passive_HaloOfProtection = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Passive.HaloOfProtection"), FString("HaloOfProtection Passive Ability"));
@@ -163,6 +166,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	GameplayTags.Cooldown_Lightning_Electrocute =
 		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Lightning.Electrocute"), FString("Electrocute Ability Cooldown"));
+
+		GameplayTags.Cooldown_Arcane_ArcaneShards =
+		UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Arcane.ArcaneShards"), FString("ArcaneShards Ability Cooldown"));
 
 	// ------------------ Combat Socket -------------
 
