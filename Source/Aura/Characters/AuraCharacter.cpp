@@ -168,6 +168,7 @@ void AAuraCharacter::ShowMagicCircle_Implementation(UMaterialInterface* DecalMat
 {
 	if (auto* AuraPlayerController = Cast<AAuraPlayerController>(GetController())) {
 		AuraPlayerController->ShowMagicCircle(DecalMaterial);
+		AuraPlayerController->bShowMouseCursor = false;
 	}
 }
 
@@ -175,6 +176,7 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 {
 	if (auto* AuraPlayerController = Cast<AAuraPlayerController>(GetController())) {
 		AuraPlayerController->HideMagicCircle();
+		AuraPlayerController->bShowMouseCursor = true;
 	}
 }
 
