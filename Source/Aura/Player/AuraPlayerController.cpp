@@ -13,6 +13,7 @@
 #include "Aura/Input/AuraInputComponent.h"
 #include "Aura/Interaction/EnemyInterface.h"
 #include "Aura/UI/Widget/DamageTextComponent.h"
+#include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/Character.h"
 
@@ -34,10 +35,14 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	UpdateMagicCircleLocation();
 }
 
-void AAuraPlayerController::ShowMagicCircle()
+void AAuraPlayerController:: ShowMagicCircle(UMaterialInterface* DecalMaterial)
 {
 	if (!IsValid(MagicCircle)) {
 		MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass);
+
+		if (DecalMaterial) {
+			MagicCircle->MagicCircleDecal->SetMaterial(0, DecalMaterial);
+		}
 	}
 }
 

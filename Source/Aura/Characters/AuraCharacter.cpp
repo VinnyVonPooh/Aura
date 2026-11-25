@@ -164,6 +164,20 @@ void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
 	AuraPlayerState->AddToSpellPoints(InSpellPoints);
 }
 
+void AAuraCharacter::ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial)
+{
+	if (auto* AuraPlayerController = Cast<AAuraPlayerController>(GetController())) {
+		AuraPlayerController->ShowMagicCircle(DecalMaterial);
+	}
+}
+
+void AAuraCharacter::HideMagicCircle_Implementation()
+{
+	if (auto* AuraPlayerController = Cast<AAuraPlayerController>(GetController())) {
+		AuraPlayerController->HideMagicCircle();
+	}
+}
+
 void AAuraCharacter::InitAbilityActorInfo()
 {
 	auto* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
